@@ -151,7 +151,8 @@ namespace EjemploBestDay
 
         public List<Models.PetMapping> MultiMappingOneToMany()
         {
-            string sql = "SELECT * FROM [PetClinic].[dbo].[Pet] AS p INNER JOIN [PetClinic].[dbo].[Type] AS t ON p.TypeId = t.Id;";
+            string sql = "SELECT * FROM [PetClinic].[dbo].[Pet] AS p " +
+                "INNER JOIN [PetClinic].[dbo].[Type] AS t ON p.TypeId = t.Id;";
 
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["Database"].ConnectionString))
             {

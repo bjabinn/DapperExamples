@@ -57,7 +57,7 @@ namespace EjemploBestDay
             //nuevosValores.Name = "1538";
             //nuevosValores.BirthDate = new DateTime(2090, 1, 1);
             //var filasUpdateadas = petsRepo.Update(nuevosValores, 6);
-            //Console.WriteLine("Número de registro updateados con el InsertMany: " + filasUpdateadas);
+            //Console.WriteLine("Número de registro updateados: " + filasUpdateadas);
 
 
 
@@ -65,7 +65,7 @@ namespace EjemploBestDay
             //var nuevosValores = new Models.Pet
             //{
             //    Id = 1,
-            //    Name = "17Enero2019-TechSession",
+            //    Name = "16Enero2019-TechSession_0947",
             //    BirthDate = new DateTime(2090, 1, 1)
             //};
             //var filasUpdateadas = petsRepo.UpdateSpWithParameters(nuevosValores);
@@ -91,7 +91,7 @@ namespace EjemploBestDay
             //Console.WriteLine("Objeto 1 con sus relaciones 1-N");
             //Console.WriteLine(objetoDevuelto.Id + " " + objetoDevuelto.Name);
             //Console.WriteLine("");
-            //Console.WriteLine("Tipos");
+            //Console.WriteLine("Animales");
             //foreach (var tipo in objetoDevuelto.Animales)
             //{
             //    Console.WriteLine(tipo.Name);
@@ -107,20 +107,7 @@ namespace EjemploBestDay
             }
 
 
-
-
-
-
-
-
             Console.ReadKey();
-
-
-            
-
-
-
-            //Ver como montar UnitTest con Dapper - Ejemplo
         }
     }
 }
