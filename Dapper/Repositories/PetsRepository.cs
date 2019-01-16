@@ -28,38 +28,43 @@ namespace EjemploBestDay
             }
         }
 
-        public List<Models.Pet> ReadSp1()
+        public List<Models.Pet> ReadAnimalesFromSpUsingDbQuery()
         {
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["Database"].ConnectionString))
             {
-                string readSp = "GetAllPets";
-                return db.Query<Models.Pet>(readSp, commandType: CommandType.StoredProcedure).ToList();
+                return db.Query<Models.Pet>("GetAllPets", commandType: CommandType.StoredProcedure).ToList();
             }
         }
 
-        public int ReadSp2()
-        {
-            string cadenaConexion = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
-            using (IDbConnection db = new SqlConnection(cadenaConexion))
-            {
-                var affectedRows = db.Execute("GetAllPets", commandType: CommandType.StoredProcedure);
-                return affectedRows;
-            }
-        }
-
-        public int ReadSp2WithParam(int id)
+        public Models.Pet GetAnimalByIdFromSP_UsingDynamicParams(int id)
         {
             string cadenaConexion = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
 
             using (IDbConnection db = new SqlConnection(cadenaConexion))
             {
                 var p = new DynamicParameters();
-                p.Add("Id", id);
+                p.Add("@Id", id);
 
-                var affectedRows = db.Execute("GetPetById", p, commandType: CommandType.StoredProcedure);
-                return affectedRows;
+                var pet = db.Query<Models.Pet>("GetPetById", p, commandType: CommandType.StoredProcedure).First();
+                return pet;
             }
 
+        }
+
+        public int UpdateSpWithParameters(Models.Pet pet)
+        {
+            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["Database"].ConnectionString))
+            {
+                DynamicParameters parameter = new DynamicParameters();
+                parameter.Add("@Id", pet.Id, DbType.Int32, ParameterDirection.Input);
+                parameter.Add("@Name", pet.Name, DbType.String, ParameterDirection.Input);
+                parameter.Add("@NumRowsAffected", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                db.Execute("UpdateNameOfPetById", parameter, commandType: CommandType.StoredProcedure);
+
+                int rowCount = parameter.Get<int>("@NumRowsAffected");
+                return rowCount;
+            }
         }
 
 
@@ -102,6 +107,7 @@ namespace EjemploBestDay
             }
         }
 
+
         public Models.PetsTiposDTO DevolucionDTOconINNER(int id)
         {
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["Database"].ConnectionString))
@@ -113,7 +119,7 @@ namespace EjemploBestDay
             }
         }
 
-        public int multiplesQueries_unrelatedEntities()
+        public int MultiplesQueries_unrelatedEntities()
         {
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["Database"].ConnectionString))
             {
@@ -128,7 +134,7 @@ namespace EjemploBestDay
             }                
         }
 
-        public Models.TiposRelated multiplesQuerias_1ToMany(int id)
+        public Models.TiposRelated MultiplesQuerias_1ToMany(int id)
         {
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["Database"].ConnectionString))
             {
@@ -143,6 +149,38 @@ namespace EjemploBestDay
             }
         }
 
+        public List<Models.PetMapping> MultiMappingOneToMany()
+        {
+            string sql = "SELECT * FROM [PetClinic].[dbo].[Pet] AS p INNER JOIN [PetClinic].[dbo].[Type] AS t ON p.TypeId = t.Id;";
+
+            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["Database"].ConnectionString))
+            {
+                var petsDictionary = new Dictionary<int, Models.PetMapping>();
+
+                var lista = db.Query<Models.PetMapping, Models.Type, Models.PetMapping>(
+                    sql,
+                    (pet, tipo) =>
+                    {
+                        Models.PetMapping entrada;
+
+                        if (!petsDictionary.TryGetValue(pet.Id, out entrada))
+                        {
+                            entrada = pet;
+                            entrada.Tipos = new List<Models.Type>();
+                            petsDictionary.Add(entrada.Id, entrada);
+                        }
+
+                        entrada.Tipos.Add(tipo);
+                        return entrada;
+                    },
+                    splitOn: "Id")
+                    .Distinct()
+                    .ToList();
+
+                return lista;
+            }
+        }
+
 
 
 
@@ -152,3 +190,4 @@ namespace EjemploBestDay
 
     } //end class
 } //end namespace
+    

@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\PetsMapping.cs" />
     <Compile Include="Models\Pets.cs" />
     <Compile Include="Models\PetsRelated.cs" />
     <Compile Include="Models\PetsTiposDTO.cs" />
